@@ -36,3 +36,17 @@ export const CreateOrAccessChat = async (req, res) => {
     res.status(500).json({ msg: error.message });
   }
 };
+
+export const getChats = async (req, res) => {
+  try {
+    const chats = await Chat.find({
+      users: { $elemMatch: { $eq: req.user._id } },
+    })
+      .populate("users", "name email")
+      .populate("lastMessage")
+      .sort({ updatedAt: -1 });
+    res.json(chats);
+  } catch (error) {
+    res.status(500).json({ msg: error.message });
+  }
+};
