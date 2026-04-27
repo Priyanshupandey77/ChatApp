@@ -1,13 +1,6 @@
-import { useState } from 'react'
-import './App.css'
-
+import ChatPage from "./pages/ChatPage";
 function App() {
-
-  return (
-    <>
-      <h1>Priyanshu Pandey</h1>
-    </>
-  )
+  return <ChatPage />;
 }
 
-export default App
+export default App;
