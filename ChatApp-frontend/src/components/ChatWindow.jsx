@@ -1,15 +1,15 @@
 import MessageInput from "./MessageInput";
 
-function ChatWindow({ selectedChat, onSend }) {
+function ChatWindow({selectedChat, messages, onSend }) {
   if (!selectedChat) {
     return <div>Select a chat</div>;
   }
 
   return (
     <div style={{ width: "70%", padding: "10px" }}>
-      {selectedChat.messages.map((msg) => (
+      {messages.map((msg) => (
         <div key={msg.id}>
-          <strong>{msg.sender}:</strong>
+          <strong>{msg.sender?.name || "You"}:</strong>
           {msg.content}
         </div>
       ))}

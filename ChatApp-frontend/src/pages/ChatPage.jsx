@@ -1,53 +1,75 @@
 import { useState } from "react";
 import ChatWindow from "../components/ChatWindow";
 import Sidebar from "../components/Sidebar";
+import { useEffect } from "react";
+import API from "../api/axios";
 
 function ChatPage() {
-  const [chats, setChats] = useState([
-    {
-      id: 1,
-      name: "Kunal",
-      messages: [
-        { id: 1, sender: "me", content: "Hello Kunal" },
-        { id: 2, sender: "Kunal", content: "Hi bro" },
-      ],
-    },
-    {
-      id: 2,
-      name: "Rahul",
-      messages: [
-        { id: 1, sender: "me", content: "Hey Rahul" },
-        { id: 2, sender: "Rahul", content: "Hello!" },
-      ],
-    },
-  ]);
+  const [chats, setChats] = useState([]);
   const [selectedChat, setSelectedChat] = useState(null);
+  const [messages, setMessages] = useState([]);
 
-  const handleSendMessage = (message) => {
-    if (!selectedChat) return;
-    const newMessage = {
-      id: Date.now(),
-      sender: "me",
+  const handleSendMessage = async (message) => {
+    if (!selectedChat?._id) return;
+
+    const tempMessage = {
+      _id: Date.now(),
+      sender: { name: "You" },
       content: message,
     };
 
-    const updatedChats = chats.map((chat) => {
-      if (chat.id === selectedChat.id) {
-        return {
-          ...chat,
-          messages: [...chat.messages, newMessage],
-        };
-      }
-      return chat;
-    });
-    setChats(updatedChats);
-    setSelectedChat(updatedChats.find((chat) => chat.id === selectedChat.id));
+    setMessages((prev) => [...prev, tempMessage]);
+    try {
+      const res = await API.post("/message", {
+        content: message,
+        chatId: selectedChat._id,
+      });
+
+      setMessages((prev) =>
+        prev.map((msg) => (msg._id === tempMessage._id ? res.data : msg)),
+      );
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
+  useEffect(() => {
+    fetchChats();
+  }, []);
+
+  const fetchChats = async () => {
+    try {
+      const res = await API.get("/chat");
+      setChats(res.data);
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
+  useEffect(() => {
+    if (selectedChat) {
+      setMessages([]);
+      fetchMessages();
+    }
+  }, [selectedChat]);
+
+  const fetchMessages = async () => {
+    try {
+      const res = await API.get(`/message/${selectedChat._id}`);
+      setMessages(res.data);
+    } catch (error) {
+      console.log(error);
+    }
   };
 
   return (
     <div style={{ display: "flex", height: "100vh" }}>
       <Sidebar chats={chats} setSelectedChat={setSelectedChat} />
-      <ChatWindow selectedChat={selectedChat} onSend={handleSendMessage} />
+      <ChatWindow
+        selectedChat={selectedChat}
+        messages={messages}
+        onSend={handleSendMessage}
+      />
     </div>
   );
 }
