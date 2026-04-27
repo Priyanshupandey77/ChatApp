@@ -63,7 +63,7 @@ function ChatPage() {
   };
 
   return (
-    <div style={{ display: "flex", height: "100vh" }}>
+    <div className="flex h-screen overflow-hidden">
       <Sidebar chats={chats} setSelectedChat={setSelectedChat} />
       <ChatWindow
         selectedChat={selectedChat}
