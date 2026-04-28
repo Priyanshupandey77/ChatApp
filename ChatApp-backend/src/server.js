@@ -6,6 +6,7 @@ import { connectDB } from "./config/db.js";
 import authRoutes from "./routes/authRoutes.js";
 import chatRoutes from "./routes/chatRoutes.js";
 import messageRoutes from "./routes/messageRoutes.js";
+import { Server, Socket } from "socket.io";
 
 dotenv.config();
 connectDB();
@@ -23,4 +24,25 @@ app.get("/", (req, res) => {
 
 const PORT = process.env.PORT || 5000;
 
-app.listen(PORT, () => console.log(`Server is running on port ${PORT}`));
+const server = app.listen(PORT, () =>
+  console.log(`Server is running on port ${PORT}`),
+);
+
+const io = new Server(server, {
+  cors: {
+    origin: "http://localhost:5173",
+  },
+});
+
+io.on("connection", (Socket) => {
+  console.log("User connected:", Socket.id);
+
+  Socket.on("joinChat", (chatId) => {
+    Socket.join(chatId);
+    console.log("User joined chat:", chatId);
+  });
+
+  Socket.on("disconnect", () => {
+    console.log("User disconnected:", Socket.id);
+  });
+});
