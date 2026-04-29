@@ -3,6 +3,7 @@ import ChatWindow from "../components/ChatWindow";
 import Sidebar from "../components/Sidebar";
 import { useEffect } from "react";
 import API from "../api/axios";
+import socket from "../socket";
 
 function ChatPage() {
   const [chats, setChats] = useState([]);
@@ -12,9 +13,11 @@ function ChatPage() {
   const handleSendMessage = async (message) => {
     if (!selectedChat?._id) return;
 
+    const user = JSON.parse(localStorage.getItem("user") || "{}");
+
     const tempMessage = {
       _id: Date.now(),
-      sender: { name: "You" },
+      sender: { _id: user._id, name: user.name },
       content: message,
     };
 
@@ -32,6 +35,15 @@ function ChatPage() {
       console.log(error);
     }
   };
+  useEffect(() => {
+    const handleConnect = () => {
+      console.log("Connected to socket:", socket.id);
+    };
+
+    socket.on("connect", handleConnect);
+
+    return () => socket.off("connect", handleConnect);
+  }, []);
 
   useEffect(() => {
     fetchChats();
@@ -51,7 +63,7 @@ function ChatPage() {
       setMessages([]);
       fetchMessages();
     }
-  }, [selectedChat]);
+  }, [selectedChat?._id]);
 
   const fetchMessages = async () => {
     try {
@@ -61,6 +73,42 @@ function ChatPage() {
       console.log(error);
     }
   };
+  useEffect(() => {
+    if (!selectedChat?._id) return;
+
+    socket.emit("joinChat", selectedChat._id);
+  }, [selectedChat?._id]);
+
+  useEffect(() => {
+    const handler = (msg) => {
+      const chatId = msg.chat?._id || msg.chat;
+
+      // update messages (only if same chat)
+      if (chatId === selectedChat?._id) {
+        setMessages((prev) => {
+          if (prev.some((m) => m._id === msg._id)) return prev;
+          return [...prev, msg];
+        });
+      }
+
+      // 🔥 update chat list (move to top)
+      setChats((prev) => {
+        const updated = prev.map((chat) =>
+          chat._id === chatId ? { ...chat, lastMessage: msg } : chat,
+        );
+
+        return updated.sort(
+          (a, b) =>
+            new Date(b.lastMessage?.createdAt || 0) -
+            new Date(a.lastMessage?.createdAt || 0),
+        );
+      });
+    };
+
+    socket.on("newMessage", handler);
+
+    return () => socket.off("newMessage", handler);
+  }, [selectedChat?._id]);
 
   return (
     <div className="flex h-screen overflow-hidden">

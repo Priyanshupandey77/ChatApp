@@ -1,6 +1,15 @@
+import { useEffect, useRef } from "react";
 import MessageInput from "./MessageInput";
 
 function ChatWindow({ selectedChat, messages, onSend }) {
+  const bottomRef = useRef(null);
+
+  useEffect(() => {
+    bottomRef.current?.scrollIntoView({ behavior: "smooth" });
+  }, [messages]);
+
+  const user = JSON.parse(localStorage.getItem("user") || "{}");
+
   if (!selectedChat) {
     return (
       <div className="w-[70%] flex items-center justify-center text-gray-500">
@@ -11,16 +20,25 @@ function ChatWindow({ selectedChat, messages, onSend }) {
 
   return (
     <div className="w-[70%] flex flex-col bg-gray-100">
-      {/* Messages */}
       <div className="flex-1 overflow-y-auto p-4 space-y-2">
-        {messages.map((msg) => (
-          <div key={msg.id} className="bg-white p-2 rounded-lg shadow-sm">
-            <strong className="text-xs text-gray-500">
-              {msg.sender?.name || "You"}
-            </strong>
-            <p className="text-sm text-gray-800">{msg.content}</p>
-          </div>
-        ))}
+        {messages.map((msg) => {
+          const isMe = msg.sender?._id === user._id;
+
+          return (
+            <div
+              key={msg._id}
+              className={`flex ${isMe ? "justify-end" : "justify-start"}`}
+            >
+              <div className="bg-white p-2 rounded-lg shadow-sm max-w-xs">
+                <strong className="text-xs text-gray-500">
+                  {isMe ? "You" : msg.sender?.name}
+                </strong>
+                <p className="text-sm text-gray-800">{msg.content}</p>
+              </div>
+            </div>
+          );
+        })}
+        <div ref={bottomRef} />
       </div>
 
       <MessageInput onSend={onSend} />
