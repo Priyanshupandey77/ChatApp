@@ -1,26 +1,16 @@
-import express, { application } from "express";
+import express from "express";
 import dotenv from "dotenv";
 import cors from "cors";
-import { protect } from "./middleware/authMiddleware.js";
 import { connectDB } from "./config/db.js";
 import authRoutes from "./routes/authRoutes.js";
 import chatRoutes from "./routes/chatRoutes.js";
 import messageRoutes from "./routes/messageRoutes.js";
-import { Server, Socket } from "socket.io";
+import { Server } from "socket.io";
 
 dotenv.config();
 connectDB();
 
 const app = express();
-app.use(express.json());
-app.use(cors({ origin: "http://localhost:5173", credentials: true }));
-app.use("/api/auth", authRoutes);
-app.use("/api/chat", chatRoutes);
-app.use("/api/message", messageRoutes);
-
-app.get("/", (req, res) => {
-  res.send("API is running...");
-});
 
 const PORT = process.env.PORT || 5000;
 
@@ -30,19 +20,33 @@ const server = app.listen(PORT, () =>
 
 const io = new Server(server, {
   cors: {
-    origin: "http://localhost:5173",
+    origin: process.env.CLIENT_URL,
   },
 });
 
-io.on("connection", (Socket) => {
-  console.log("User connected:", Socket.id);
+app.use(express.json());
+app.use(cors({ origin: process.env.CLIENT_URL, credentials: true }));
+app.use((req, res, next) => {
+  req.io = io;
+  next();
+});
+app.use("/api/auth", authRoutes);
+app.use("/api/chat", chatRoutes);
+app.use("/api/message", messageRoutes);
 
-  Socket.on("joinChat", (chatId) => {
-    Socket.join(chatId);
+app.get("/", (req, res) => {
+  res.send("API is running...");
+});
+
+io.on("connection", (socket) => {
+  console.log("User connected:", socket.id);
+
+  socket.on("joinChat", (chatId) => {
+    socket.join(chatId);
     console.log("User joined chat:", chatId);
   });
 
-  Socket.on("disconnect", () => {
-    console.log("User disconnected:", Socket.id);
+  socket.on("disconnect", () => {
+    console.log("User disconnected:", socket.id);
   });
 });
