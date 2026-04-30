@@ -1,7 +1,7 @@
 import { useEffect, useRef } from "react";
 import MessageInput from "./MessageInput";
 
-function ChatWindow({ selectedChat, messages, onSend }) {
+function ChatWindow({ selectedChat, messages, onSend, isTyping }) {
   const bottomRef = useRef(null);
 
   useEffect(() => {
@@ -41,7 +41,10 @@ function ChatWindow({ selectedChat, messages, onSend }) {
         <div ref={bottomRef} />
       </div>
 
-      <MessageInput onSend={onSend} />
+      {isTyping && (
+        <div className="text-sm text-gray-500 px-4 pb-2">Typing...</div>
+      )}
+      <MessageInput onSend={onSend} selectedChat={selectedChat} />
     </div>
   );
 }

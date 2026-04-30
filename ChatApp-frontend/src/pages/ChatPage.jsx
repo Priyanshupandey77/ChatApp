@@ -8,8 +8,34 @@ function ChatPage() {
   const [chats, setChats] = useState([]);
   const [selectedChat, setSelectedChat] = useState(null);
   const [messages, setMessages] = useState([]);
-
+  const [isTyping, setIsTyping] = useState(false);
   const selectedChatRef = useRef(null);
+
+  useEffect(() => {
+    const handleTyping = (chatId) => {
+      if (chatId === selectedChatRef.current?._id) {
+        setIsTyping(true);
+      }
+    };
+
+    const handleStopTyping = (chatId) => {
+      if (chatId === selectedChatRef.current?._id) {
+        setIsTyping(false);
+      }
+    };
+
+    socket.on("typing", handleTyping);
+    socket.on("stopTyping", handleStopTyping);
+
+    return () => {
+      socket.off("typing", handleTyping);
+      socket.off("stopTyping", handleStopTyping);
+    };
+  }, []);
+
+  useEffect(() => {
+    setIsTyping(false);
+  }, [selectedChat?._id]);
 
   useEffect(() => {
     if (!selectedChat) {
@@ -21,16 +47,30 @@ function ChatPage() {
 
   const handleSendMessage = async (message) => {
     if (!selectedChat?._id) return;
+    const user = JSON.parse(localStorage.getItem("user") || "{}");
+
+    const tempMessage = {
+      _id: Date.now(),
+      sender: { _id: user._id, name: user.name },
+      content: message,
+    };
+
+    setMessages((prev) => [...prev, tempMessage]);
 
     try {
       const res = await API.post("/message", {
         content: message,
         chatId: selectedChat._id,
       });
+
+      setMessages((prev) =>
+        prev.map((msg) => (msg._id === tempMessage._id ? res.data : msg)),
+      );
     } catch (error) {
       console.log(error);
     }
   };
+
   useEffect(() => {
     const handleConnect = () => {
       console.log("Connected to socket:", socket.id);
@@ -117,6 +157,7 @@ function ChatPage() {
         selectedChat={selectedChat}
         messages={messages}
         onSend={handleSendMessage}
+        isTyping={isTyping}
       />
     </div>
   );

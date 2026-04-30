@@ -1,7 +1,30 @@
 import { useState } from "react";
+import socket from "../socket.js";
+import { useRef } from "react";
 
-function MessageInput({ onSend }) {
+function MessageInput({ onSend, selectedChat }) {
   const [input, setInput] = useState("");
+  const isTyping = useRef(false);
+  const typingTimeout = useRef(null);
+
+  const handleChange = (e) => {
+    const value = e.target.value;
+    setInput(value);
+
+    if (!selectedChat?._id) return;
+
+    if (!isTyping.current) {
+      socket.emit("typing", selectedChat._id);
+      isTyping.current = true;
+    }
+
+    clearTimeout(typingTimeout.current);
+
+    typingTimeout.current = setTimeout(() => {
+      socket.emit("stopTyping", selectedChat._id);
+      isTyping.current = false;
+    }, 1000);
+  };
 
   const handleSubmit = (e) => {
     e.preventDefault();
@@ -10,6 +33,7 @@ function MessageInput({ onSend }) {
 
     onSend(input);
     setInput("");
+    socket.emit("stopTyping", selectedChat._id);
   };
 
   return (
@@ -21,7 +45,7 @@ function MessageInput({ onSend }) {
         type="text"
         placeholder="Type a message..."
         value={input}
-        onChange={(e) => setInput(e.target.value)}
+        onChange={handleChange}
         className="flex-1 border border-gray-300 rounded-full px-4 py-2 outline-none focus:ring-2 focus:ring-blue-400"
       />
       <button
