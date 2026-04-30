@@ -32,12 +32,13 @@ export const sendMessage = async (req, res) => {
     await Chat.findByIdAndUpdate(chatId, {
       lastMessage: message._id,
     });
-    req.io.to(chatId).emit("newMessage", message);
 
     await message.populate([
       { path: "chat", select: "users" },
       { path: "sender", select: "name email" },
     ]);
+
+    req.io.to(chatId).emit("newMessage", message);
 
     return res.status(201).json({ ...message._doc, __v: undefined });
   } catch (error) {
