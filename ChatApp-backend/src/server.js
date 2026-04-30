@@ -50,6 +50,13 @@ io.on("connection", (socket) => {
     socket.join(chatId);
     console.log("User joined chat:", chatId);
   });
+  socket.on("typing", (chatId) => {
+    socket.to(chatId).emit("typing", chatId);
+  });
+
+  socket.on("stopTyping", (chatId) => {
+    socket.to(chatId).emit("stopTyping", chatId);
+  });
 
   socket.on("disconnect", () => {
     console.log("User disconnected:", socket.id);
