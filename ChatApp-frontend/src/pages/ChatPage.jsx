@@ -10,6 +10,7 @@ function ChatPage() {
   const [messages, setMessages] = useState([]);
   const [isTyping, setIsTyping] = useState(false);
   const selectedChatRef = useRef(null);
+  const userRef = useRef(JSON.parse(localStorage.getItem("user") || "{}"));
 
   useEffect(() => {
     const handleTyping = (chatId) => {
@@ -46,11 +47,13 @@ function ChatPage() {
 
   const handleSendMessage = async (message) => {
     if (!selectedChat?._id) return;
-    const user = JSON.parse(localStorage.getItem("user") || "{}");
 
     const tempMessage = {
       _id: Date.now(),
-      sender: { _id: user._id, name: user.name },
+      sender: {
+        _id: userRef.current._id,
+        name: userRef.current.name,
+      },
       content: message,
     };
 
@@ -119,11 +122,9 @@ function ChatPage() {
 
   useEffect(() => {
     const handler = (msg) => {
-      if (!msg?.chat) return;
+      if (msg.sender?._id === userRef.current._id) return;
 
       const chatId = msg.chat?._id || msg.chat;
-
-      if (msg.sender?._id === user._id) return;
 
       setMessages((prev) => {
         if (chatId === selectedChatRef.current?._id) {
@@ -149,6 +150,14 @@ function ChatPage() {
     socket.on("newMessage", handler);
 
     return () => socket.off("newMessage", handler);
+  }, []);
+
+  useEffect(() => {
+    return () => {
+      if (selectedChatRef.current?._id) {
+        socket.emit("stopTyping", selectedChatRef.current._id);
+      }
+    };
   }, []);
 
   return (
