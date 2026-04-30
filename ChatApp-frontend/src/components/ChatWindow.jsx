@@ -31,7 +31,7 @@ function ChatWindow({ selectedChat, messages, onSend }) {
             >
               <div className="bg-white p-2 rounded-lg shadow-sm max-w-xs">
                 <strong className="text-xs text-gray-500">
-                  {isMe ? "You" : msg.sender?.name}
+                  {isMe ? "You" : msg.sender?.name || "User"}
                 </strong>
                 <p className="text-sm text-gray-800">{msg.content}</p>
               </div>

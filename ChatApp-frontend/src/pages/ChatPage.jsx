@@ -1,7 +1,6 @@
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import ChatWindow from "../components/ChatWindow";
 import Sidebar from "../components/Sidebar";
-import { useEffect } from "react";
 import API from "../api/axios";
 import socket from "../socket";
 
@@ -9,6 +8,16 @@ function ChatPage() {
   const [chats, setChats] = useState([]);
   const [selectedChat, setSelectedChat] = useState(null);
   const [messages, setMessages] = useState([]);
+
+  const selectedChatRef = useRef(null);
+
+  useEffect(() => {
+    if (!selectedChat) {
+      selectedChatRef.current = null;
+    } else {
+      selectedChatRef.current = selectedChat;
+    }
+  }, [selectedChat]);
 
   const handleSendMessage = async (message) => {
     if (!selectedChat?._id) return;
@@ -46,15 +55,18 @@ function ChatPage() {
   };
 
   useEffect(() => {
-    if (selectedChat) {
-      setMessages([]);
-      fetchMessages();
-    }
+    const chatId = selectedChat?._id;
+    if (!chatId) return;
+
+    setMessages([]);
+    fetchMessages(chatId);
   }, [selectedChat?._id]);
 
-  const fetchMessages = async () => {
+  const fetchMessages = async (chatId) => {
+    if (!chatId) return;
+
     try {
-      const res = await API.get(`/message/${selectedChat._id}`);
+      const res = await API.get(`/message/${chatId}`);
       setMessages(res.data);
     } catch (error) {
       console.log(error);
@@ -68,14 +80,17 @@ function ChatPage() {
 
   useEffect(() => {
     const handler = (msg) => {
+      if (!msg?.chat) return;
+
       const chatId = msg.chat?._id || msg.chat;
 
-      if (chatId === selectedChat?._id) {
-        setMessages((prev) => {
+      setMessages((prev) => {
+        if (chatId === selectedChatRef.current?._id) {
           if (prev.some((m) => m._id === msg._id)) return prev;
           return [...prev, msg];
-        });
-      }
+        }
+        return prev;
+      });
 
       setChats((prev) => {
         const updated = prev.map((chat) =>
@@ -93,7 +108,7 @@ function ChatPage() {
     socket.on("newMessage", handler);
 
     return () => socket.off("newMessage", handler);
-  }, [selectedChat?._id]);
+  }, []);
 
   return (
     <div className="flex h-screen overflow-hidden">
