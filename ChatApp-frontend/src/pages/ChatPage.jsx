@@ -34,15 +34,14 @@ function ChatPage() {
   }, []);
 
   useEffect(() => {
+    if (selectedChat?._id) {
+      socket.emit("stopTyping", selectedChat._id);
+    }
     setIsTyping(false);
   }, [selectedChat?._id]);
 
   useEffect(() => {
-    if (!selectedChat) {
-      selectedChatRef.current = null;
-    } else {
-      selectedChatRef.current = selectedChat;
-    }
+    selectedChatRef.current = selectedChat;
   }, [selectedChat]);
 
   const handleSendMessage = async (message) => {
@@ -123,6 +122,8 @@ function ChatPage() {
       if (!msg?.chat) return;
 
       const chatId = msg.chat?._id || msg.chat;
+
+      if (msg.sender?._id === user._id) return;
 
       setMessages((prev) => {
         if (chatId === selectedChatRef.current?._id) {
