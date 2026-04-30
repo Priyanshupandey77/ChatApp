@@ -13,24 +13,11 @@ function ChatPage() {
   const handleSendMessage = async (message) => {
     if (!selectedChat?._id) return;
 
-    const user = JSON.parse(localStorage.getItem("user") || "{}");
-
-    const tempMessage = {
-      _id: Date.now(),
-      sender: { _id: user._id, name: user.name },
-      content: message,
-    };
-
-    setMessages((prev) => [...prev, tempMessage]);
     try {
       const res = await API.post("/message", {
         content: message,
         chatId: selectedChat._id,
       });
-
-      setMessages((prev) =>
-        prev.map((msg) => (msg._id === tempMessage._id ? res.data : msg)),
-      );
     } catch (error) {
       console.log(error);
     }
@@ -83,7 +70,6 @@ function ChatPage() {
     const handler = (msg) => {
       const chatId = msg.chat?._id || msg.chat;
 
-      // update messages (only if same chat)
       if (chatId === selectedChat?._id) {
         setMessages((prev) => {
           if (prev.some((m) => m._id === msg._id)) return prev;
@@ -91,7 +77,6 @@ function ChatPage() {
         });
       }
 
-      // 🔥 update chat list (move to top)
       setChats((prev) => {
         const updated = prev.map((chat) =>
           chat._id === chatId ? { ...chat, lastMessage: msg } : chat,
