@@ -188,16 +188,6 @@ Observe:
 🔄 Real-time updates
 🤝 Contributing
 
-Contributions are welcome!
-
-Fork the repository
-Create a feature branch
-Commit your changes
-Open a Pull Request
-📄 License
-
-This project is licensed under the MIT License.
-
 👨‍💻 Author
 
 Priyanshu Pandey
@@ -206,19 +196,3 @@ GitHub: https://github.com/Priyanshupandey77
 ⭐ Final Note
 
 If you like this project, consider giving it a ⭐ on GitHub!
-
-
----
-
-This version is:
-- ✅ Clean
-- ✅ Complete
-- ✅ Resume + GitHub + recruiter ready
-- ✅ No fluff, but still impressive
-
-If you want next-level (seriously standout), I can add:
-- 📸 Screenshots section  
-- 📊 Performance metrics  
-- 🧱 System design diagram image  
-
-Just say *“upgrade it”* 👍
