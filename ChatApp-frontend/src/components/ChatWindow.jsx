@@ -1,5 +1,6 @@
 import { useEffect, useRef } from "react";
 import MessageInput from "./MessageInput";
+import { FaArrowLeft } from "react-icons/fa";
 
 function ChatWindow({ selectedChat, messages, onSend, isTyping, goBack }) {
   const bottomRef = useRef(null);
@@ -30,7 +31,7 @@ function ChatWindow({ selectedChat, messages, onSend, isTyping, goBack }) {
           onClick={goBack}
          className="md:hidden text-blue-500 text-lg px-2 py-1"
         >
-          ←
+          <FaArrowLeft className="w-5 h-5"/>
         </button>
 
         <p className="font-semibold text-gray-800">
