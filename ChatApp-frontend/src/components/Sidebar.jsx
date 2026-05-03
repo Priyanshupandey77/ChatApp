@@ -3,7 +3,7 @@ import API from "../api/axios";
 import { HiOutlineLogout } from "react-icons/hi";
 import { useState } from "react";
 
-function Sidebar({ chats, setChats, setSelectedChat }) {
+function Sidebar({ chats, setChats, setSelectedChat, isOpen }) {
   const [query, setQuery] = useState("");
   const [users, setUsers] = useState([]);
 
@@ -63,7 +63,11 @@ function Sidebar({ chats, setChats, setSelectedChat }) {
   };
 
 return (
-  <div className="w-1/3 bg-gray-900 text-white border-r border-gray-800 flex flex-col">
+  <div
+  className={`${
+    isOpen ? "flex" : "hidden"
+  } md:flex w-full md:w-1/3 bg-gray-900 text-white border-r border-gray-800 flex-col`}
+>
 
     {/* HEADER */}
     <h3 className="p-4 text-lg font-semibold border-b border-gray-800 tracking-wide">

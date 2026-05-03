@@ -161,13 +161,19 @@ function ChatPage() {
   }, []);
 
   return (
-    <div className="flex h-screen overflow-hidden">
-      <Sidebar chats={chats} setChats={setChats} setSelectedChat={setSelectedChat} />
+    <div className="h-screen flex flex-col md:flex-row overflow-hidden">
+      <Sidebar
+        chats={chats}
+        setChats={setChats}
+        setSelectedChat={setSelectedChat}
+        isOpen={!selectedChat}
+      />
       <ChatWindow
         selectedChat={selectedChat}
         messages={messages}
         onSend={handleSendMessage}
         isTyping={isTyping}
+        goBack={() => setSelectedChat(null)}
       />
     </div>
   );

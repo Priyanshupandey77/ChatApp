@@ -39,18 +39,18 @@ function MessageInput({ onSend, selectedChat }) {
   return (
     <form
       onSubmit={handleSubmit}
-      className="flex items-center p-3 bg-white border-t gap-2"
+      className="flex items-center gap-2 px-3 py-2 bg-white border-t"
     >
       <input
         type="text"
         placeholder="Type a message..."
         value={input}
         onChange={handleChange}
-        className="flex-1 border border-gray-300 rounded-full px-4 py-2 outline-none focus:ring-2 focus:ring-blue-400"
+        className="flex-1 bg-gray-100 rounded-full px-4 py-2 text-sm outline-none focus:ring-2 focus:ring-blue-400"
       />
       <button
         type="submit"
-        className="bg-blue-500 text-white px-4 py-2 rounded-full hover:bg-blue-600 transition"
+        className="bg-blue-500 text-white px-4 py-2 rounded-full text-sm"
       >
         Send
       </button>

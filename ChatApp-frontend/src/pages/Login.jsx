@@ -30,7 +30,7 @@ function Login() {
   <div className="flex items-center justify-center h-screen bg-gray-100">
     <form
       onSubmit={handleLogin}
-      className="bg-white p-8 rounded-2xl shadow-lg w-85 space-y-5"
+      className="bg-white p-8 rounded-2xl shadow-lg w-full max-w-sm space-y-5"
     >
       <h2 className="text-2xl font-semibold text-center text-gray-800">
         Welcome Back
