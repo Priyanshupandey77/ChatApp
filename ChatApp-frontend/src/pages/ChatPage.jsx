@@ -162,7 +162,7 @@ function ChatPage() {
 
   return (
     <div className="flex h-screen overflow-hidden">
-      <Sidebar chats={chats} setSelectedChat={setSelectedChat} />
+      <Sidebar chats={chats} setChats={setChats} setSelectedChat={setSelectedChat} />
       <ChatWindow
         selectedChat={selectedChat}
         messages={messages}

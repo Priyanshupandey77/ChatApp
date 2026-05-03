@@ -26,48 +26,55 @@ function Login() {
     }
   };
 
-  return (
-    <div className="flex items-center justify-center h-screen bg-gray-100">
-      <form
-        onSubmit={handleLogin}
-        className="bg-white p-6 rounded-xl shadow-md w-75 space-y-4"
+ return (
+  <div className="flex items-center justify-center h-screen bg-gray-100">
+    <form
+      onSubmit={handleLogin}
+      className="bg-white p-8 rounded-2xl shadow-lg w-85 space-y-5"
+    >
+      <h2 className="text-2xl font-semibold text-center text-gray-800">
+        Welcome Back
+      </h2>
+
+      <p className="text-center text-sm text-gray-500">
+        Login to continue chatting
+      </p>
+
+      <input
+        type="email"
+        placeholder="Email"
+        value={email}
+        onChange={(e) => setEmail(e.target.value)}
+        className="w-full bg-gray-100 border border-gray-200 rounded-lg px-4 py-2.5 outline-none focus:ring-2 focus:ring-blue-400 focus:bg-white transition text-sm"
+      />
+
+      <input
+        type="password"
+        placeholder="Password"
+        value={password}
+        onChange={(e) => setPassword(e.target.value)}
+        className="w-full bg-gray-100 border border-gray-200 rounded-lg px-4 py-2.5 outline-none focus:ring-2 focus:ring-blue-400 focus:bg-white transition text-sm"
+      />
+
+      <button
+        type="submit"
+        className="w-full bg-blue-500 text-white py-2.5 rounded-lg font-medium hover:bg-blue-600 transition shadow-sm"
       >
-        <h2 className="text-xl font-semibold text-center">Login</h2>
+        Login
+      </button>
 
-        <input
-          type="email"
-          placeholder="Email"
-          value={email}
-          onChange={(e) => setEmail(e.target.value)}
-          className="w-full border border-gray-300 rounded-md px-3 py-2 outline-none focus:ring-2 focus:ring-blue-400"
-        />
-
-        <input
-          type="password"
-          placeholder="Password"
-          value={password}
-          onChange={(e) => setPassword(e.target.value)}
-          className="w-full border border-gray-300 rounded-md px-3 py-2 outline-none focus:ring-2 focus:ring-blue-400"
-        />
-
-        <button
-          type="submit"
-          className="w-full bg-blue-500 text-white py-2 rounded-md hover:bg-blue-600 transition"
+      <p className="text-center text-sm text-gray-600">
+        Don’t have an account?{" "}
+        <Link
+          to="/register"
+          className="text-blue-600 font-medium hover:underline"
         >
-          Login
-        </button>
-        <p className="text-center text-xs sm:text-sm text-gray-600">
-          Don't have an account?{" "}
-          <Link
-            to="/register"
-            className="text-blue-600 font-medium hover:underline"
-          >
-            Signup
-          </Link>
-        </p>
-      </form>
-    </div>
-  );
+          Signup
+        </Link>
+      </p>
+    </form>
+  </div>
+);
 }
 
 export default Login;

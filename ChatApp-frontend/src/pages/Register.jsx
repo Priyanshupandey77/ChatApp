@@ -42,58 +42,63 @@ function Register() {
     }
   };
 
-  return (
-    <div className="min-h-screen flex items-center justify-center bg-linear-to-br from-green-100 to-green-300 px-3 sm:px-4">
-      <form
-        onSubmit={handleSubmit}
-        className="bg-white p-5 sm:p-8 rounded-2xl shadow-xl w-full max-w-md space-y-4"
+return (
+  <div className="min-h-screen flex items-center justify-center bg-linear-to-br from-blue-100 to-blue-300 px-4">
+    <form
+      onSubmit={handleSubmit}
+      className="bg-white p-8 rounded-2xl shadow-lg w-full max-w-md space-y-5"
+    >
+      <h2 className="text-2xl font-semibold text-center text-gray-800">
+        Create Account
+      </h2>
+
+      <p className="text-center text-sm text-gray-500">
+        Join us and start chatting 🚀
+      </p>
+
+      <input
+        type="text"
+        name="name"
+        placeholder="Full Name"
+        onChange={handleChange}
+        className="w-full bg-gray-100 border border-gray-200 rounded-lg px-4 py-2.5 outline-none focus:ring-2 focus:ring-blue-400 focus:bg-white transition text-sm"
+      />
+
+      <input
+        type="email"
+        name="email"
+        placeholder="Email Address"
+        onChange={handleChange}
+        className="w-full bg-gray-100 border border-gray-200 rounded-lg px-4 py-2.5 outline-none focus:ring-2 focus:ring-blue-400 focus:bg-white transition text-sm"
+      />
+
+      <input
+        type="password"
+        name="password"
+        placeholder="Password"
+        onChange={handleChange}
+        className="w-full bg-gray-100 border border-gray-200 rounded-lg px-4 py-2.5 outline-none focus:ring-2 focus:ring-blue-400 focus:bg-white transition text-sm"
+      />
+
+      <button
+        type="submit"
+        className="w-full bg-blue-500 text-white py-2.5 rounded-lg font-medium hover:bg-blue-600 transition shadow-sm"
       >
-        <h2 className="text-xl sm:text-2xl font-bold text-center text-gray-800">
-          Create Account
-        </h2>
-        <p className="text-center text-gray-500 text-xs sm:text-sm">
-          Join us and get started 🚀
-        </p>
+        Register
+      </button>
 
-        <input
-          type="text"
-          name="name"
-          placeholder="Full Name"
-          onChange={handleChange}
-          className="w-full p-2.5 sm:p-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-green-400 transition text-sm sm:text-base"
-        />
-
-        <input
-          type="email"
-          name="email"
-          placeholder="Email Address"
-          onChange={handleChange}
-          className="w-full p-2.5 sm:p-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-green-400 transition text-sm sm:text-base"
-        />
-
-        <input
-          type="password"
-          name="password"
-          placeholder="Password"
-          onChange={handleChange}
-          className="w-full p-2.5 sm:p-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-green-400 transition text-sm sm:text-base"
-        />
-        <button
-          type="submit"
-          className="w-full bg-green-500 hover:bg-green-600 text-white p-2.5 sm:p-3 rounded-lg font-semibold transition duration-200 text-sm sm:text-base"
+      <p className="text-center text-sm text-gray-600">
+        Already have an account?{" "}
+        <Link
+          to="/"
+          className="text-blue-600 font-medium hover:underline"
         >
-          Register
-        </button>
-
-        <p className="text-center text-xs sm:text-sm text-gray-600">
-          Already have an account?{" "}
-          <Link to="/" className="text-green-600 font-medium hover:underline">
-            Login
-          </Link>
-        </p>
-      </form>
-    </div>
-  );
+          Login
+        </Link>
+      </p>
+    </form>
+  </div>
+);
 }
 
 export default Register;
