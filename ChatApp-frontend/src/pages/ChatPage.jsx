@@ -8,6 +8,7 @@ function ChatPage() {
   const [chats, setChats] = useState([]);
   const [selectedChat, setSelectedChat] = useState(null);
   const [messages, setMessages] = useState([]);
+  const [unread, setUnread] = useState({});
   const [isTyping, setIsTyping] = useState(false);
   const selectedChatRef = useRef(null);
   const userRef = useRef(JSON.parse(localStorage.getItem("user") || "{}"));
@@ -122,17 +123,24 @@ function ChatPage() {
 
   useEffect(() => {
     const handler = (msg) => {
-      if (msg.sender?._id === userRef.current._id) return;
+      if (!msg?.chat) return;
 
       const chatId = msg.chat?._id || msg.chat;
+      const isMe = msg.sender?._id === userRef.current._id;
 
-      setMessages((prev) => {
-        if (chatId === selectedChatRef.current?._id) {
+      if (chatId === selectedChatRef.current?._id) {
+        setMessages((prev) => {
           if (prev.some((m) => m._id === msg._id)) return prev;
           return [...prev, msg];
-        }
-        return prev;
-      });
+        });
+      }
+
+      if (!isMe && chatId !== selectedChatRef.current?._id) {
+        setUnread((prev) => ({
+          ...prev,
+          [chatId]: (prev[chatId] || 0) + 1,
+        }));
+      }
 
       setChats((prev) => {
         const updated = prev.map((chat) =>
@@ -153,6 +161,15 @@ function ChatPage() {
   }, []);
 
   useEffect(() => {
+    if (!selectedChat?._id) return;
+
+    setUnread((prev) => ({
+      ...prev,
+      [selectedChat._id]: 0,
+    }));
+  }, [selectedChat?._id]);
+
+  useEffect(() => {
     return () => {
       if (selectedChatRef.current?._id) {
         socket.emit("stopTyping", selectedChatRef.current._id);
@@ -165,7 +182,9 @@ function ChatPage() {
       <Sidebar
         chats={chats}
         setChats={setChats}
+        unread={unread}
         setSelectedChat={setSelectedChat}
+        selectedChat={selectedChat}
         isOpen={!selectedChat}
       />
       <ChatWindow
