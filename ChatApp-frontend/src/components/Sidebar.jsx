@@ -71,9 +71,7 @@ function Sidebar({
 
   return (
     <div
-      className={`${
-        isOpen ? "flex" : "hidden"
-      } md:flex w-full md:w-1/3 bg-gray-900 text-white border-r border-gray-800 flex-col`}
+      className={`relative ${isOpen ? "flex" : "hidden"} md:flex w-full md:w-1/3 bg-gray-900 text-white border-r border-gray-800 flex-col`}
     >
       {/* HEADER */}
       <h3 className="p-4 text-lg font-semibold border-b border-gray-800 tracking-wide">
@@ -150,10 +148,9 @@ function Sidebar({
       {/* LOGOUT */}
       <button
         onClick={handleLogout}
-        className="mx-3 mt-3 flex items-center justify-center gap-2 bg-red-500 hover:bg-red-600 text-white py-2 rounded-lg text-sm transition"
+        className="absolute top-3 right-3 flex items-center justify-center w-8 h-8 rounded-full bg-gray-800 hover:bg-red-500 text-gray-300 hover:text-white transition"
       >
         <HiOutlineLogout size={16} />
-        Logout
       </button>
     </div>
   );
